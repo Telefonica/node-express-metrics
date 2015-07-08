@@ -1,5 +1,5 @@
 {
-  "name": "express-metrics",
+  "name": "node-express-metrics",
   "description": "Express middleware to log the metrics traces",
   "version": "1.0.0",
   "license": "Apache-2.0",
@@ -20,11 +20,11 @@
     "node": ">= 0.10.26"
   },
   "scripts": {
-    "test": "mocha -R spec test/environment.js test/unit/*-test.js test/unit/**/*-test.js",
-    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R dot test/environment.js test/unit/*-test.js test/unit/**/*-test.js",
+    "test": "mocha -R spec test/environment.js test/unit/*-test.js",
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R dot test/environment.js test/unit/*-test.js",
     "lint": "jscs lib && eslint lib",
     "prepublish": "npm run test && npm run lint",
-    "travis": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test/environment.js test/*-test.js test/unit/**/*-test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "travis": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test/environment.js test/unit/*-test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "devDependencies": {
     "chai": "^3.0.0",

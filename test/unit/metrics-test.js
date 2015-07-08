@@ -6,15 +6,16 @@ var metricsModule = require('../../lib/metrics');
 
 describe('Metrics Middleware Tests', function() {
 
-  var logStub;
+  var logStub,
+      oldConsoleLog = console.log;
 
   beforeEach(function(done) {
-
     process.domain = {
       // timer.js issues with domain
       enter: function() {},
       exit: function() {}
     };
+    console.log = oldConsoleLog;
     done();
   });
 
@@ -42,7 +43,7 @@ describe('Metrics Middleware Tests', function() {
 
     var resSpy = sinon.spy(res, 'on');
 
-    metricsModule({logger: logStub})(null, res, nextMiddlewareStub.next);
+    metricsModule(logStub)(null, res, nextMiddlewareStub.next);
 
     process.domain.metrics.info = 'info';
     process.domain.metrics.status = 'ok';
@@ -74,14 +75,14 @@ describe('Metrics Middleware Tests', function() {
     var logSpy = sinon.spy(logStub, 'info');
     var nextMiddlewareSpy = sinon.spy(nextMiddlewareStub, 'next');
 
-    metricsModule({logger: logStub})(null, null, nextMiddlewareStub.next);
+    metricsModule(logStub)(null, null, nextMiddlewareStub.next);
 
     expect(nextMiddlewareSpy).to.have.calledOnce;
     expect(logSpy).to.not.have.called;
 
   });
 
-  it('should not write the metric trace if the logger does not exist' , function(done) {
+  it('should write to console the metric trace if the logger does not exist' , function(done) {
 
     var writeMetricsMethod;
 
@@ -97,41 +98,13 @@ describe('Metrics Middleware Tests', function() {
       }
     };
 
-    var resSpy = sinon.spy(res, 'on');
-
-    metricsModule({})(null, res, nextMiddlewareStub.next);
-
-    process.domain.metrics.info = 'info';
-    process.domain.metrics.status = 'ok';
-
-    expect(resSpy).to.have.calledOnce;
-    expect(nextMiddlewareSpy).to.have.calledOnce;
-    expect(writeMetricsMethod).to.exist;
-
-    // call writeMetrics method
-    writeMetricsMethod();
-    done();
-
-  });
-
-  it('should not write the metric trace if options do not exist' , function(done) {
-
-    var writeMetricsMethod;
-
-    var nextMiddlewareStub = {
-      next: function() {}
-    };
-
-    var nextMiddlewareSpy = sinon.spy(nextMiddlewareStub, 'next');
-
-    var res = {
-      on: function(eventType, writeMetrics) {
-        writeMetricsMethod = writeMetrics;
-      }
+    var consoleStub = {
+      log: function(msg, context) {}
     };
 
     var resSpy = sinon.spy(res, 'on');
-
+    var consoleSpy = sinon.spy(consoleStub, 'log');
+    console.log = consoleStub.log;
     metricsModule()(null, res, nextMiddlewareStub.next);
 
     process.domain.metrics.info = 'info';
@@ -139,13 +112,17 @@ describe('Metrics Middleware Tests', function() {
 
     expect(resSpy).to.have.calledOnce;
     expect(nextMiddlewareSpy).to.have.calledOnce;
+    expect(consoleSpy).to.not.have.called;
     expect(writeMetricsMethod).to.exist;
 
     // call writeMetrics method
     writeMetricsMethod();
+    expect(consoleSpy).to.have.calledOnce;;
+    expect(consoleSpy).to.have.calledWith('metrics', {info: 'info', status: 'ok'});
     done();
 
   });
+
 
   it('should not log the metrics information if the middleware has a logger instance' +
       ' and metrics is empty' , function(done) {
@@ -171,7 +148,7 @@ describe('Metrics Middleware Tests', function() {
 
     var resSpy = sinon.spy(res, 'on');
 
-    metricsModule({logger: logStub})(null, res, nextMiddlewareStub.next);
+    metricsModule(logStub)(null, res, nextMiddlewareStub.next);
 
 
     expect(resSpy).to.have.calledOnce;
@@ -188,6 +165,7 @@ describe('Metrics Middleware Tests', function() {
 
 
   after(function(done) {
+    console.log = oldConsoleLog;
     process.domain = null;
     done();
   });
