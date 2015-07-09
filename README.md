@@ -8,7 +8,7 @@ Express middleware to log metrics traces
 
 This express middleware gathers the metrics information from a **metrics** object stored in the process [domain](https://nodejs.org/api/domain.html): **process.domain.metrics**.
 
-For each request, the middleware initializes the metrics object, and at the end of the response logs the information stored in the metrics object. It is responsibility of the service logic to enrich this metrics object.
+For each request, the middleware initializes the metrics object and, at the end of the response, logs the information stored in the metrics object. It is responsibility of the service logic to enrich this metrics object.
 
 ## Installation
 
@@ -91,7 +91,7 @@ app.get('/version', function(req, res) {
 app.listen(3000);
 ```
 
-After launching the previous server, each HTTP request generates 2 log entries to trace the request and response:
+After launching the previous server, each HTTP request generates 2 log entries to trace the request and response and another log entry with the metrics information:
 
 ```json
 {"time":"2015-07-08T20:31:25.210Z","lvl":"INFO","corr":"7a051a2b-e3e8-4625-a680-1ae30105cdda","trans":"7a051a2b-e3e8-4625-a680-1ae30105cdda","op":"test","msg":"Request from 127.0.0.1: GET /version"}
