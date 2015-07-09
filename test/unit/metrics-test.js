@@ -20,7 +20,7 @@ describe('Metrics Middleware Tests', function() {
   });
 
   it('should log the metrics information if the middleware has a logger instance' +
-      ' and metrics information' , function(done) {
+      ' and metrics information' , function() {
 
     var writeMetricsMethod;
     logStub = {
@@ -56,7 +56,6 @@ describe('Metrics Middleware Tests', function() {
     // call writeMetrics method
     writeMetricsMethod();
     expect(logSpy).to.have.calledWith('metrics', {info: 'info', status: 'ok'});
-    done();
 
   });
 
@@ -82,7 +81,7 @@ describe('Metrics Middleware Tests', function() {
 
   });
 
-  it('should write to console the metric trace if the logger does not exist' , function(done) {
+  it('should write to console the metrics trace if the logger does not exist' , function() {
 
     var writeMetricsMethod;
 
@@ -119,13 +118,12 @@ describe('Metrics Middleware Tests', function() {
     writeMetricsMethod();
     expect(consoleSpy).to.have.calledOnce;;
     expect(consoleSpy).to.have.calledWith('metrics', {info: 'info', status: 'ok'});
-    done();
 
   });
 
 
   it('should not log the metrics information if the middleware has a logger instance' +
-      ' and metrics is empty' , function(done) {
+      ' and metrics is empty' , function() {
 
     var writeMetricsMethod;
     logStub = {
@@ -159,7 +157,6 @@ describe('Metrics Middleware Tests', function() {
     // call writeMetrics method
     writeMetricsMethod();
     expect(logSpy).to.not.have.called;
-    done();
 
   });
 
